@@ -32,7 +32,56 @@
         </div>
         <p style="font-size: 12px; color: #7f8c8d; margin-top: 15px;">Last updated: 7:10 AM</p>
     </div>
+<div class="card" style="background: #eee;">
+        <h4>Developer Sandbox Contoller</h4>
+        <button onclick="triggerDelay()" style="background-color: #e67e22;">Simulate 10-Min Delay</button>
+        <button onclick="resetBus()" style="background-color: #27ae60;">Reset to On-Time</button>
+    </div>
 
+    <script>
+        // 1. This is your Data Schema from your blueprint
+        let busData = {
+            "district_id": "Olentangy Local Schools",
+            "school_id": "Olentangy Orange High School",
+            "bus_number": 14,
+            "route_status": "On Time", 
+            "minutes_delayed": 0,
+            "estimated_arrival_time": "7:10 AM",
+            "last_updated": "1:15 PM"
+        };
+
+        // 2. Function to update what the user sees on the screen
+        function updateUI() {
+            const statusBox = document.getElementById('status-box-element');
+            const etaText = document.getElementById('eta-text');
+            const statusText = document.getElementById('status-text');
+            
+            etaText.innerText = "ETA: " + busData.estimated_arrival_time;
+            
+            if (busData.route_status === "Delayed") {
+                statusBox.className = "status-box delayed";
+                statusText.innerText = "Status: Delayed (" + busData.minutes_delayed + " Mins)";
+            } else {
+                statusBox.className = "status-box on-time";
+                statusText.innerText = "Status: On Time";
+            }
+        }
+
+        // 3. Functions to simulate data changes
+        function triggerDelay() {
+            busData.route_status = "Delayed";
+            busData.minutes_delayed = 10;
+            busData.estimated_arrival_time = "7:20 AM";
+            updateUI();
+        }
+
+        function resetBus() {
+            busData.route_status = "On Time";
+            busData.minutes_delayed = 0;
+            busData.estimated_arrival_time = "7:10 AM";
+            updateUI();
+        }
+    </script>
 </body>
 </html>
 Initial commit of prototype UI
