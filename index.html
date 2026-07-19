@@ -40,44 +40,68 @@
     </div>
 
     <script>
-        // Data structure matching your schema
-        let busData = {
-            "route_status": "On Time", 
-            "minutes_delayed": 0,
-            "estimated_arrival_time": "7:10 AM"
+       // 1. Now we track MULTIPLE buses using an object dictionary
+        let fleetData = {
+            "14": {
+                "route_status": "On Time", 
+                "minutes_delayed": 0,
+                "estimated_arrival_time": "7:10 AM"
+            },
+            "22": {
+                "route_status": "Delayed", 
+                "minutes_delayed": 15,
+                "estimated_arrival_time": "7:40 AM"
+            }
         };
+
+        // Track which bus the user is currently looking at
+        let currentBus = "14";
+
+        // Listen for when the user changes the dropdown menu
+        document.getElementById('bus').addEventListener('change', function(event) {
+            currentBus = event.target.value.replace("Bus ", ""); // Gets "14" or "22"
+            updateUI();
+        });
 
         function updateUI() {
             const statusBox = document.getElementById('status-box-element');
             const etaText = document.getElementById('eta-text');
             const statusText = document.getElementById('status-text');
+            const busTitle = document.querySelector('h3');
             
-            etaText.innerText = "ETA: " + busData.estimated_arrival_time;
+            // Get the data for the active bus
+            let activeBusData = fleetData[currentBus];
             
-            if (busData.route_status === "Delayed") {
+            // Update the header title dynamically
+            busTitle.innerText = "Olentangy Orange HS — Bus " + currentBus;
+            
+            // Update times and colors
+            etaText.innerText = "ETA: " + activeBusData.estimated_arrival_time;
+            
+            if (activeBusData.route_status === "Delayed") {
                 statusBox.className = "status-box delayed";
-                statusText.innerText = "Status: Delayed (" + busData.minutes_delayed + " Mins)";
+                statusText.innerText = "Status: Delayed (" + activeBusData.minutes_delayed + " Mins)";
             } else {
                 statusBox.className = "status-box on-time";
                 statusText.innerText = "Status: On Time";
             }
         }
 
+        // Modifies the active bus data via sandbox buttons
         function triggerDelay() {
-            busData.route_status = "Delayed";
-            busData.minutes_delayed = 10;
-            busData.estimated_arrival_time = "7:20 AM";
+            fleetData[currentBus].route_status = "Delayed";
+            fleetData[currentBus].minutes_delayed = 10;
+            fleetData[currentBus].estimated_arrival_time = "7:20 AM"; // Simplified calculation
             updateUI();
         }
 
         function resetBus() {
-            busData.route_status = "On Time";
-            busData.minutes_delayed = 0;
-            busData.estimated_arrival_time = "7:10 AM";
+            fleetData[currentBus].route_status = "On Time";
+            fleetData[currentBus].minutes_delayed = 0;
+            fleetData[currentBus].estimated_arrival_time = currentBus === "14" ? "7:10 AM" : "7:25 AM";
             updateUI();
         }
     </script>
-
 </body>
 </html>
 Initial commit of prototype UI
