@@ -95,13 +95,15 @@
             }
         }
 
-        function triggerDelay() {
-            fleetData[currentBus].route_status = "Delayed";
-            fleetData[currentBus].minutes_delayed = 10;
-            fleetData[currentBus].estimated_arrival_time = "7:20 AM";
-            updateUI();
-        }
-
+       function triggerDelay() {
+    fleetData[currentBus].route_status = "Delayed";
+    fleetData[currentBus].minutes_delayed = 10;
+    
+    // Set ETA based on which bus is currently selected
+    fleetData[currentBus].estimated_arrival_time = currentBus === "14" ? "7:20 AM" : "7:35 AM";
+    
+    updateUI();
+}
         function resetBus() {
             fleetData[currentBus].route_status = "On Time";
             fleetData[currentBus].minutes_delayed = 0;
