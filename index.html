@@ -5,6 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Olentangy Transit Tracker</title>
     <style>
+        .hidden {
+    display: none;
+}
+.dev-toggle-btn {
+    background: transparent;
+    color: #7f8c8d;
+    border: 1px dashed #bdc3c7;
+    font-size: 12px;
+    padding: 6px;
+    margin-top: 10px;
+    cursor: pointer;
+}
         body { font-family: Arial, sans-serif; background-color: #f4f4f9; padding: 20px; display: flex; flex-direction: column; align-items: center; }
         .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; margin-bottom: 20px; }
         .status-box { padding: 15px; border-radius: 5px; color: white; font-weight: bold; margin-top: 15px; transition: background-color 0.3s ease; }
@@ -95,13 +107,72 @@
             updateUI();
         }
 
+      <button class="dev-toggle-btn" onclick="toggleDevPanel()">⚙️ Toggle Dev Mode</button>
+
+    <div id="dev-panel" class="card hidden" style="background: #eef2f5; margin-top: 15px;">
+        <h4 style="margin-top: 0;">Developer Sandbox Controller</h4>
+        <button onclick="triggerDelay()" style="background-color: #e67e22;">Simulate 10-Min Delay</button>
+        <button onclick="resetBus()" style="background-color: #27ae60;">Reset to On-Time</button>
+    </div>
+
+    <script>
+        let fleetData = {
+            "14": {
+                "route_status": "On Time", 
+                "minutes_delayed": 0,
+                "estimated_arrival_time": "7:10 AM"
+            },
+            "22": {
+                "route_status": "Delayed", 
+                "minutes_delayed": 15,
+                "estimated_arrival_time": "7:40 AM"
+            }
+        };
+
+        let currentBus = "14";
+
+        document.getElementById('bus').addEventListener('change', function(event) {
+            currentBus = event.target.value.replace("Bus ", "");
+            updateUI();
+        });
+
+        function updateUI() {
+            const statusBox = document.getElementById('status-box-element');
+            const etaText = document.getElementById('eta-text');
+            const statusText = document.getElementById('status-text');
+            const busTitle = document.querySelector('h3');
+            
+            let activeBusData = fleetData[currentBus];
+            busTitle.innerText = "Olentangy Orange HS — Bus " + currentBus;
+            etaText.innerText = "ETA: " + activeBusData.estimated_arrival_time;
+            
+            if (activeBusData.route_status === "Delayed") {
+                statusBox.className = "status-box delayed";
+                statusText.innerText = "Status: Delayed (" + activeBusData.minutes_delayed + " Mins)";
+            } else {
+                statusBox.className = "status-box on-time";
+                statusText.innerText = "Status: On Time";
+            }
+        }
+
+        function triggerDelay() {
+            fleetData[currentBus].route_status = "Delayed";
+            fleetData[currentBus].minutes_delayed = 10;
+            fleetData[currentBus].estimated_arrival_time = "7:20 AM";
+            updateUI();
+        }
+
         function resetBus() {
             fleetData[currentBus].route_status = "On Time";
             fleetData[currentBus].minutes_delayed = 0;
             fleetData[currentBus].estimated_arrival_time = currentBus === "14" ? "7:10 AM" : "7:25 AM";
             updateUI();
         }
+
+        function toggleDevPanel() {
+            const devPanel = document.getElementById('dev-panel');
+            devPanel.classList.toggle('hidden');
+        }
     </script>
 </body>
 </html>
-Initial commit of prototype UI
